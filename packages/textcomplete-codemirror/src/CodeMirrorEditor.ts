@@ -18,14 +18,16 @@ export class CodeMirrorEditor extends Editor {
    * @implements {@link Editor#applySearchResult}
    */
   applySearchResult(searchResult: SearchResult): void {
-    const replace = searchResult.replace(
+    const replacement = searchResult.getReplacementData(
       this.getBeforeCursor(),
       this.getAfterCursor()
     )
-    if (Array.isArray(replace)) {
-      this.cm.setValue(replace[0] + replace[1])
-      const lines = replace[0].split("\n")
-      this.cm.setCursor(lines.length - 1, lines[lines.length - 1].length)
+    if (replacement) {
+      this.cm.replaceRange(
+        replacement.text,
+        this.cm.posFromIndex(replacement.start),
+        this.cm.posFromIndex(replacement.end)
+      )
     }
     this.cm.focus()
   }
